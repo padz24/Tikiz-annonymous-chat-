@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Admin Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.1/flowbite.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-50">
+  <!-- Header Navigasi -->
+  <nav class="bg-white shadow-md">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <h1 class="text-2xl font-bold text-gray-800">Admin Panel</h1>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="text-gray-600">Selamat datang, <%= adminUsername || 'Admin' %></span>
+        <a href="/logout" class="px-4 py-2 text-white rounded-md hover:bg-red-700 transition-colors duration-200">
+          <svg class="w-8 h-8 text-red-600 hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-label="Logout">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h3a3 3 0 013 3v1"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Konten Utama -->
+  <div class="container mx-auto p-6">
+    <div class="mb-6 bg-blue-100 p-4 rounded-md flex items-center space-x-3">
+      <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <p class="text-gray-700">Kelola aktivitas bot dengan mudah dari dashboard ini.</p>
+    </div>
+    <div id="system-info" class="mb-6 p-6 bg-white rounded-lg shadow-md">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">Informasi Sistem Server</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-sm text-gray-800">
+        <div>
+          <h3 class="font-semibold">CPU</h3>
+          <p id="cpu-model">Loading...</p>
+          <p id="cpu-load">Loading...</p>
+        </div>
+        <div>
+          <h3 class="font-semibold">Memori</h3>
+          <p id="mem-used">Loading...</p>
+          <p id="mem-usage">Loading...</p>
+        </div>
+        <div>
+          <h3 class="font-semibold">Jaringan</h3>
+          <p id="net-iface">Loading...</p>
+          <p id="net-traffic">Loading...</p>
+        </div>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 lg:grid-cols-3">
+      <a href="/users" class="block p-6 bg-gradient-to-r from-blue-100 to-blue-200 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200 flex items-center space-x-4">
+        <div data-tooltip-target="tooltip-users" class="relative">
+          <svg class="w-8 h-8 text-blue-600 hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-label="Kelola Pengguna">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+          </svg>
+          <div id="tooltip-users" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip">
+            Lihat dan kelola daftar pengguna terdaftar
+            <div class="tooltip-arrow" data-popper-arrow></div>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-blue-600">Kelola Pengguna</h3>
+          <p class="text-gray-600">Lihat dan kelola daftar pengguna terdaftar.</p>
+        </div>
+      </a>
+      <a href="/banned-users" class="block p-6 bg-gradient-to-r from-red-100 to-red-200 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200 flex items-center space-x-4">
+        <div data-tooltip-target="tooltip-banned" class="relative">
+          <svg class="w-8 h-8 text-red-600 hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-label="Kelola Pengguna yang Diblokir">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
+          </svg>
+          <div id="tooltip-banned" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip">
+            Lihat dan kelola pengguna yang diblokir
+            <div class="tooltip-arrow" data-popper-arrow></div>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-red-600">Kelola Pengguna yang Diblokir</h3>
+          <p class="text-gray-600">Lihat dan kelola pengguna yang diblokir.</p>
+        </div>
+      </a>
+      <a href="/reports" class="block p-6 bg-gradient-to-r from-yellow-100 to-yellow-200 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200 flex items-center space-x-4">
+        <div data-tooltip-target="tooltip-reports" class="relative">
+          <svg class="w-8 h-8 text-yellow-600 hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-label="Kelola Laporan">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <div id="tooltip-reports" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip">
+            Lihat dan kelola laporan dari pengguna
+            <div class="tooltip-arrow" data-popper-arrow></div>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-yellow-600">Kelola Laporan</h3>
+          <p class="text-gray-600">Lihat dan kelola laporan dari pengguna.</p>
+        </div>
+      </a>
+      <a href="/stats" class="block p-6 bg-gradient-to-r from-green-100 to-green-200 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200 flex items-center space-x-4">
+        <div data-tooltip-target="tooltip-stats" class="relative">
+          <svg class="w-8 h-8 text-green-600 hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-label="Statistik">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2 2v4a2 2 0 002 2zm6 0V9a2 2 0 00-2 2v8a2 2 0 002 2zm6 0V5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          <div id="tooltip-stats" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip">
+            Lihat statistik pengguna dan aktivitas bot
+            <div class="tooltip-arrow" data-popper-arrow></div>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-green-600">Statistik</h3>
+          <p class="text-gray-600">Lihat statistik pengguna dan aktivitas bot.</p>
+        </div>
+      </a>
+    </div>
+  <canvas id="cpuChart" class="mt-4 w-full h-32"></canvas>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('cpuChart').getContext('2d');
+    const cpuChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'CPU Load (%)',
+          data: [],
+          borderColor: 'rgb(59,130,246)', // blue-500
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: { display: false },
+          y: {
+            beginAtZero: true,
+            max: 100
+          }
+        }
+      }
+    });
+  
+    function updateCPUChart(value) {
+      const timeLabel = new Date().toLocaleTimeString();
+      if (cpuChart.data.labels.length > 20) {
+        cpuChart.data.labels.shift();
+        cpuChart.data.datasets[0].data.shift();
+      }
+      cpuChart.data.labels.push(timeLabel);
+      cpuChart.data.datasets[0].data.push(parseFloat(value));
+      cpuChart.update();
+    }
+  
+    async function fetchAndUpdate() {
+      try {
+        const res = await fetch('/api/system-info');
+        const data = await res.json();
+  
+        document.getElementById('cpu-model').innerText = `Model: ${data.cpu.model} (${data.cpu.cores} cores)`;
+        document.getElementById('cpu-load').innerText = `Load: ${data.cpu.load}`;
+  
+        document.getElementById('mem-used').innerText = `Used: ${data.memory.used} / ${data.memory.total}`;
+        document.getElementById('mem-usage').innerText = `Usage: ${data.memory.usage}`;
+  
+        document.getElementById('net-iface').innerText = `Interface: ${data.network.iface}`;
+        document.getElementById('net-traffic').innerText = `Received: ${data.network.rx}, Sent: ${data.network.tx}`;
+  
+        updateCPUChart(data.cpu.load.replace('%', ''));
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    }
+  
+    fetchAndUpdate();
+    setInterval(fetchAndUpdate, 1000);
+  </script>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.1/flowbite.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+  <script>eruda.init();</script>
+  <script>
+    async function fetchSystemInfo() {
+      try {
+        const res = await fetch('/api/system-info');
+        const data = await res.json();
+  
+        document.getElementById('cpu-model').innerText = `Model: ${data.cpu.model} (${data.cpu.cores} cores)`;
+        document.getElementById('cpu-load').innerText = `Load: ${data.cpu.load}`;
+  
+        document.getElementById('mem-used').innerText = `Used: ${data.memory.used} / ${data.memory.total}`;
+        document.getElementById('mem-usage').innerText = `Usage: ${data.memory.usage}`;
+  
+        document.getElementById('net-iface').innerText = `Interface: ${data.network.iface}`;
+        document.getElementById('net-traffic').innerText = `Received: ${data.network.rx}, Sent: ${data.network.tx}`;
+      } catch (err) {
+        console.error('Gagal memuat sistem info:', err);
+      }
+    }
+  
+    // Panggil pertama kali
+    fetchSystemInfo();
+  
+    // Jalankan setiap detik
+    setInterval(fetchSystemInfo, 1000);
+  </script>
+</body>
+</html>

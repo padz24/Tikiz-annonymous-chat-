@@ -1,0 +1,142 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Statistik - Admin Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.1/flowbite.min.css" rel="stylesheet" />
+  <style>
+    .pulse {
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
+  <div class="container mx-auto p-6">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-4xl font-extrabold text-gray-900">📊 Statistik Admin</h2>
+      <button id="refresh-stats" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200" data-tooltip-target="tooltip-refresh">
+        <svg class="w-5 h-5 animate-spin hidden" id="loading-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        Refresh
+      </button>
+      <div id="tooltip-refresh" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip">
+        Perbarui data statistik
+        <div class="tooltip-arrow" data-popper-arrow></div>
+      </div>
+    </div><a href="/dashboard" class="inline-block mb-4 text-blue-600 hover:underline">← Kembali ke Dashboard</a>
+<% if (error) { %>
+  <div class="mb-4 text-red-600 bg-red-100 p-3 rounded-md animate-pulse"><%= error %></div>
+<% } %>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+  <%- include('stat-card', {
+    iconColor: 'text-blue-600',
+    gradient: 'from-blue-100 to-blue-200',
+    label: 'Total Pengguna',
+    value: stats.totalUsers,
+    tooltip: 'Jumlah total pengguna terdaftar',
+    iconPath: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z'
+  }) %>
+
+  <%- include('stat-card', {
+    iconColor: 'text-green-600',
+    gradient: 'from-green-100 to-green-200',
+    label: 'Obrolan Aktif',
+    tooltip: 'Jumlah obrolan aktif saat ini',
+    value: stats.activeChats,
+    iconPath: `M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8s-9-3.582-9-8 4.03-8 9-8 9 3.582 9 8z`
+  }) %>
+
+  <%- include('stat-card', {
+    iconColor: 'text-yellow-600',
+    gradient: 'from-yellow-100 to-yellow-200',
+    label: 'Laporan Tertunda',
+    tooltip: 'Jumlah laporan yang belum ditangani',
+    value: stats.pendingReports,
+    iconPath: `M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z`
+  }) %>
+
+  <%- include('stat-card', {
+    iconColor: 'text-red-600',
+    gradient: 'from-red-100 to-red-200',
+    label: 'Pengguna Diblokir',
+    tooltip: 'Jumlah pengguna yang diblokir',
+    value: stats.bannedUsers,
+    iconPath: `M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z`
+  }) %>
+</div>
+
+<div class="mt-8 p-6 bg-white rounded-lg shadow-md">
+  <div class="flex justify-between items-center mb-4">
+    <h3 class="text-lg font-semibold text-gray-700">📈 Tren Laporan Harian</h3>
+    <select id="chart-filter" class="px-3 py-2 bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600">
+      <option value="7">7 Hari Terakhir</option>
+      <option value="30">30 Hari Terakhir</option>
+    </select>
+  </div>
+  <canvas id="reportsChart" class="w-full h-64"></canvas>
+</div>
+
+<p class="mt-4 text-sm text-gray-600">Terakhir diperbarui: <%= stats.lastUpdated %></p>
+
+  </div>  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <script>
+    let chartInstance = null;
+    async function fetchChartData(days) {
+      const response = await fetch(`/stats/reports-trend?days=${days}`);
+      const data = await response.json();
+      const ctx = document.getElementById('reportsChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: 'Laporan per Hari',
+            data: data.values,
+            backgroundColor: 'rgba(37, 99, 235, 0.5)',
+            borderColor: 'rgba(37, 99, 235, 1)',
+            borderWidth: 1,
+            hoverBackgroundColor: 'rgba(37, 99, 235, 0.8)'
+          }]
+        },
+        options: {
+          scales: { y: { beginAtZero: true }, x: { grid: { display: false } } },
+          plugins: {
+            tooltip: { enabled: true },
+            legend: { display: true, position: 'top' }
+          },
+          animation: {
+            duration: 1000,
+            easing: 'easeOutQuart'
+          }
+        }
+      });
+    }
+
+    document.getElementById('chart-filter').addEventListener('change', e => fetchChartData(e.target.value));
+
+    document.getElementById('refresh-stats').addEventListener('click', async () => {
+      const icon = document.getElementById('loading-icon');
+      icon.classList.remove('hidden');
+      const response = await fetch('/stats/data');
+      const data = await response.json();
+      icon.classList.add('hidden');
+      if (data.error) {
+        alert(data.error);
+        return;
+      }
+      document.querySelector('.text-2xl.font-bold.text-blue-600').textContent = data.stats.totalUsers;
+      document.querySelectorAll('.text-2xl.font-bold.text-green-600')[0].textContent = data.stats.activeChats;
+      document.querySelector('.text-2xl.font-bold.text-yellow-600').textContent = data.stats.pendingReports;
+      document.querySelector('.text-2xl.font-bold.text-red-600').textContent = data.stats.bannedUsers;
+      document.querySelector('.text-gray-600').textContent = `Terakhir diperbarui: ${data.stats.lastUpdated}`;
+      fetchChartData(document.getElementById('chart-filter').value);
+    });
+
+    fetchChartData(7);
+  </script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.1/flowbite.min.js"></script></body>
+</html>
