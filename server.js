@@ -62,9 +62,7 @@ app.get('/', (req, res) => {
 
 app.post('/', async (req, res) => {
   const { username, password } = req.body;
-  const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10); // Simpan di DB untuk produksi
-
-  if (username === process.env.ADMIN_USERNAME && await bcrypt.compare(password, hashedPassword)) {
+  if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
     req.session.isAuthenticated = true;
     req.session.adminUsername = username;
     res.redirect('/dashboard');
