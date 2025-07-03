@@ -114,7 +114,7 @@ app.get('/api/system-info', hybridAuth, async (req, res) => {
       si.fsSize(),
       si.battery(),
       si.time(),
-      si.cpuCurrentspeed()
+      si.cpuCurrentSpeed()
     ]);
 
     const cpu = {
