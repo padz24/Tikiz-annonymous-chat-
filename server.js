@@ -95,14 +95,34 @@ app.get('/dashboard', hybridAuth, async (req, res) => {
 
 app.get('/api/system-info', hybridAuth, async (req, res) => {
   try {
-    const cpuLoad = await si.currentLoad();
-    const mem = await si.mem();
-    const networkStats = await si.networkStats();
+    const [
+      cpuLoad,
+      mem,
+      networkStats,
+      cpuTemp,
+      osInfo,
+      disk,
+      battery,
+      time,
+      currentSpeed
+    ] = await Promise.all([
+      si.currentLoad(),
+      si.mem(),
+      si.networkStats(),
+      si.cpuTemperature(),
+      si.osInfo(),
+      si.fsSize(),
+      si.battery(),
+      si.time(),
+      si.cpuCurrentspeed()
+    ]);
 
     const cpu = {
       cores: os.cpus()?.length || "No data",
       model: os.cpus()[0]?.model || "No data",
-      load: cpuLoad?.currentLoad.toFixed(2) + '%' || "No data"
+      load: cpuLoad?.currentLoad.toFixed(2) + '%' || "No data",
+      speed: currentSpeed.avg ? currentSpeed.avg.toFixed(2) + ' GHz' : 'No data',
+      temperature: cpuTemp.main ? cpuTemp.main + '°C' : 'No data'
     };
 
     const memory = {
@@ -117,7 +137,30 @@ app.get('/api/system-info', hybridAuth, async (req, res) => {
       tx: (networkStats[0]?.tx_bytes / 1024 / 1024).toFixed(2) + ' MB'
     };
 
-    res.json({ cpu, memory, network });
+    const diskInfo = disk.map(d => ({
+      fs: d.fs,
+      type: d.type,
+      size: (d.size / 1024 / 1024 / 1024).toFixed(2) + ' GB',
+      used: (d.used / 1024 / 1024 / 1024).toFixed(2) + ' GB',
+      usage: ((d.used / d.size) * 100).toFixed(2) + '%'
+    }));
+
+    const batteryInfo = {
+      hasBattery: battery.hasBattery,
+      isCharging: battery.isCharging,
+      percent: battery.percent + '%',
+      timeRemaining: battery.timeRemaining + ' min'
+    };
+
+    const system = {
+      platform: osInfo.platform,
+      distro: osInfo.distro,
+      release: osInfo.release,
+      uptime: (os.uptime() / 60 / 60).toFixed(2) + ' hours',
+      timezone: time.timezone
+    };
+
+    res.json({ cpu, memory, network, disk: diskInfo, battery: batteryInfo, system });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
