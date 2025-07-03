@@ -37,33 +37,85 @@
       <p class="text-gray-700">Kelola aktivitas bot dengan mudah dari dashboard ini.</p>
     </div>
     <div id="system-info" class="mb-6 p-6 bg-white rounded-lg shadow-md">
-      <h2 class="text-xl font-semibold text-gray-700 mb-4">Informasi Sistem Server</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-sm text-gray-800">
+        <!-- CPU -->
         <div>
-          <h3 class="font-semibold">CPU</h3>
+          <h3 class="font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" stroke-width="2"
+              viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 9h6v6H9zM4 4h2v2H4zM4 18h2v2H4zM18 4h2v2h-2zM18 18h2v2h-2zM2 9h2v6H2zM20 9h2v6h-2zM9 2h6v2H9zM9 20h6v2H9z" />
+            </svg>
+            CPU
+          </h3>
           <p id="cpu-model">Loading...</p>
           <p id="cpu-load">Loading...</p>
         </div>
+      
+        <!-- Memory -->
         <div>
-          <h3 class="font-semibold">Memori</h3>
+          <h3 class="font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" stroke-width="2"
+              viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M6 4h12v2H6zM6 18h12v2H6zM6 6v12m12-12v12M10 10h4v4h-4z" />
+            </svg>
+            Memori
+          </h3>
           <p id="mem-used">Loading...</p>
           <p id="mem-usage">Loading...</p>
         </div>
+      
+        <!-- Network -->
         <div>
-          <h3 class="font-semibold">Jaringan</h3>
+          <h3 class="font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" stroke-width="2"
+              viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14" />
+            </svg>
+            Jaringan
+          </h3>
           <p id="net-iface">Loading...</p>
           <p id="net-traffic">Loading...</p>
         </div>
+      
+        <!-- Disk -->
         <div>
-          <h3 class="font-semibold">Disk</h3>
-          <ul id="disk-info" class="list-disc ml-5"></ul>
+          <h3 class="font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" stroke-width="2"
+              viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M4 4h16v16H4zM8 8h8v8H8z" />
+            </svg>
+            Disk
+          </h3>
+          <ul id="disk-info" class="list-disc ml-5 text-sm"></ul>
         </div>
+      
+        <!-- Battery -->
         <div>
-          <h3 class="font-semibold">Battery</h3>
+          <h3 class="font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5 text-pink-500" fill="none" stroke="currentColor" stroke-width="2"
+              viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M7 7h10v10H7zM20 10v4" />
+            </svg>
+            Baterai
+          </h3>
           <p id="battery-status">Loading...</p>
         </div>
+      
+        <!-- OS -->
         <div>
-          <h3 class="font-semibold">OS Info</h3>
+          <h3 class="font-semibold flex items-center gap-2">
+            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
+              viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 7h18M3 12h18M3 17h18" />
+            </svg>
+            Sistem Operasi
+          </h3>
           <p id="os-platform">Loading...</p>
           <p id="os-uptime">Loading...</p>
         </div>
