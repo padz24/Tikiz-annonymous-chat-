@@ -173,16 +173,36 @@
       try {
         const res = await fetch('/api/system-info');
         const data = await res.json();
-  
+
+        // CPU
         document.getElementById('cpu-model').innerText = `Model: ${data.cpu.model} (${data.cpu.cores} cores)`;
         document.getElementById('cpu-load').innerText = `Load: ${data.cpu.load}`;
-  
+
+        // Memory
         document.getElementById('mem-used').innerText = `Used: ${data.memory.used} / ${data.memory.total}`;
         document.getElementById('mem-usage').innerText = `Usage: ${data.memory.usage}`;
-  
+
+        // Network
         document.getElementById('net-iface').innerText = `Interface: ${data.network.iface}`;
         document.getElementById('net-traffic').innerText = `Received: ${data.network.rx}, Sent: ${data.network.tx}`;
-  
+
+        // Disk
+        const diskList = document.getElementById('disk-info');
+        diskList.innerHTML = '';
+        data.disk.forEach(disk => {
+          const li = document.createElement('li');
+          li.textContent = `${disk.fs} (${disk.type}) - ${disk.used} / ${disk.size} (${disk.usage})`;
+          diskList.appendChild(li);
+        });
+
+        // Battery
+        document.getElementById('battery-status').innerText = data.battery.hasBattery ? `Charging: ${data.battery.isCharging}, ${data.battery.percent} (${data.battery.timeRemaining} remaining)` : 'No battery detected';
+
+        // OS
+        document.getElementById('os-platform').innerText = `Platform: ${data.system.distro} ${data.system.release}`;
+        document.getElementById('os-uptime').innerText = `Uptime: ${data.system.uptime}`;
+    
+        // CPU Chart
         updateCPUChart(data.cpu.load.replace('%', ''));
       } catch (err) {
         console.error('Error:', err);
